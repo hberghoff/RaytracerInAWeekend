@@ -21,6 +21,18 @@ void PPMFile::AddNewPixel(const float r, const float g, const float b)
 	}
 }
 
+void PPMFile::AddNewPixel(const Vector3 & rgb)
+{
+	if (_currentElement < _dim)
+	{
+		const std::size_t pixelOffset = _currentElement * 3;
+		_currentElement++;
+		_pixels[pixelOffset + 0] = static_cast<int>(255.99 * rgb.r);
+		_pixels[pixelOffset + 1] = static_cast<int>(255.99 * rgb.g);
+		_pixels[pixelOffset + 2] = static_cast<int>(255.99 * rgb.b);
+	}
+}
+
 void PPMFile::Write(const std::string & filename)
 {
 	std::ofstream write(filename + extention);

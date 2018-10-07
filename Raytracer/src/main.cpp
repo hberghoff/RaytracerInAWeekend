@@ -1,7 +1,9 @@
 #include "../inc/PPMFile.h"
+#include "../inc/Vector3.h"
 
 int main(int argc, char** argv)
 {
+	Vector3 sample(0, 0, 0);
 	const int nx = 200, ny = 100;
 	PPMFile Test(nx, ny);
 	for (int j = ny - 1; j >= 0; j--)
