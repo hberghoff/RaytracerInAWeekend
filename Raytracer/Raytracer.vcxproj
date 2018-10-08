@@ -121,10 +121,12 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PPMFile.cpp" />
+    <ClCompile Include="src\Ray.cpp" />
     <ClCompile Include="src\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\PPMFile.h" />
+    <ClInclude Include="inc\Ray.h" />
     <ClInclude Include="inc\Vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

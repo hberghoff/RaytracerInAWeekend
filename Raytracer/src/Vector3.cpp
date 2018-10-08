@@ -140,3 +140,8 @@ std::istream & operator>>(std::istream & is, Vector3 & vec)
   is >> vec.x >> vec.y >> vec.z;
   return is;
 }
+
+Vector3 operator*(const float t, const Vector3 & other)
+{
+  return other * t;
+}

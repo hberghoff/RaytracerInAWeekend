@@ -44,3 +44,4 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const Vector3& vec);
 std::istream& operator>>(std::istream& is, Vector3& vec);
+Vector3 operator*(const float t, const Vector3& other);
