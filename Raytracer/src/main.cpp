@@ -1,6 +1,8 @@
 #include "../inc/PPMFile.h"
-#include "../inc/Ray.h"
+#include "../inc/HitableList.h"
+#include "../inc/Sphere.h"
 #include <math.h>
+#include <float.h>
 
 void TestFileWrite(int nx, int ny)
 {
@@ -48,6 +50,20 @@ vec3 Color(const Ray& r)
   return Lerp(t, vec3(1.0f, 1.0f, 1.0f), vec3(0.5f, 0.7f, 1.0f));
 }
 
+vec3 Color(const Ray& r, const std::shared_ptr<Hitable>& hitables)
+{
+  HitRecord rec;
+  if (hitables->hit(r, 0.0, FLT_MAX, rec))
+  {
+    return 0.5f * vec3(rec.normal.x + 1, rec.normal.y + 1, rec.normal.z + 1);
+  }
+  else
+  {
+    const float t = 0.5f * (r.GetDirection().y + 1.0f);
+    return Lerp(t, vec3(1.0f, 1.0f, 1.0f), vec3(0.5f, 0.7f, 1.0f));
+  }
+}
+
 int main(int argc, char** argv)
 {
   const int SCALE = 2;
@@ -55,6 +71,10 @@ int main(int argc, char** argv)
   PPMFile Final(nx, ny);
   const float deltaU = 1.0f / nx, deltaV = 1.0f / ny;
   vec3 lower_left_corner(-2.0, -1.0, -1.0), horizontal(4.0, 0.0, 0.0), vertical(0, 2.0, 0), origin;
+  std::vector<std::shared_ptr<Hitable>> list;
+  list.push_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5f));
+  list.push_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100.0f));
+  auto world = std::make_shared<HitableList>(list);
   float v = (0.5 + ny - 1) * deltaV; 
   for (int j = ny - 1; j >= 0; j--)
   {
@@ -63,7 +83,7 @@ int main(int argc, char** argv)
     {
       Ray r(origin, lower_left_corner + u * horizontal + v * vertical);
       u += deltaU;
-      Final.AddNewPixel(Color(r));
+      Final.AddNewPixel(Color(r, world));
     }
     v -= deltaV;
   }

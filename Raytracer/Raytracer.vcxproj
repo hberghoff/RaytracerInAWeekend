@@ -119,14 +119,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\HitableList.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PPMFile.cpp" />
     <ClCompile Include="src\Ray.cpp" />
+    <ClCompile Include="src\Sphere.cpp" />
     <ClCompile Include="src\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Hitable.h" />
+    <ClInclude Include="inc\HitableList.h" />
     <ClInclude Include="inc\PPMFile.h" />
     <ClInclude Include="inc\Ray.h" />
+    <ClInclude Include="inc\Sphere.h" />
     <ClInclude Include="inc\Vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
