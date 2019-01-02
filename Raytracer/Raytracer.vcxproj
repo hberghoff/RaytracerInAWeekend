@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\HitableList.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PPMFile.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="src\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\Hitable.h" />
     <ClInclude Include="inc\HitableList.h" />
     <ClInclude Include="inc\PPMFile.h" />

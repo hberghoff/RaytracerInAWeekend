@@ -1,8 +1,10 @@
 #include "../inc/PPMFile.h"
 #include "../inc/HitableList.h"
 #include "../inc/Sphere.h"
+#include "../inc/Camera.h"
 #include <math.h>
 #include <float.h>
+#include <random>
 
 void TestFileWrite(int nx, int ny)
 {
@@ -68,25 +70,27 @@ int main(int argc, char** argv)
 {
   const int SCALE = 2;
   const int nx = 200 * SCALE, ny = 100 * SCALE;
-  PPMFile Final(nx, ny);
+  PPMFile FinalImage(nx, ny);
   const float deltaU = 1.0f / nx, deltaV = 1.0f / ny;
-  vec3 lower_left_corner(-2.0, -1.0, -1.0), horizontal(4.0, 0.0, 0.0), vertical(0, 2.0, 0), origin;
   std::vector<std::shared_ptr<Hitable>> list;
   list.push_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5f));
   list.push_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100.0f));
   auto world = std::make_shared<HitableList>(list);
-  float v = (0.5 + ny - 1) * deltaV; 
+  Camera ViewPort;
+
+  float v = (0.5 + ny - 1) * deltaV;
   for (int j = ny - 1; j >= 0; j--)
   {
     float u = 0.5 * deltaU;
     for (int i = 0; i < nx; i++)
     {
-      Ray r(origin, lower_left_corner + u * horizontal + v * vertical);
+
+      Ray CastedRay = ViewPort.GetRay(u, v);
       u += deltaU;
-      Final.AddNewPixel(Color(r, world));
+      FinalImage.AddNewPixel(Color(CastedRay, world));
     }
     v -= deltaV;
   }
-  Final.Write("Final");
+  FinalImage.Write("Final");
   return 0;
 }
