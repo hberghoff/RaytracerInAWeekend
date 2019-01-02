@@ -12,7 +12,7 @@ auto HitableList::hit(const Ray & r, float tmin, float tmax, HitRecord & rec) co
 {
   HitRecord cur;
   bool result = false;
-  double closest = tmax;
+  float closest = tmax;
   for (const auto& iter : list)
   {
     if (iter->hit(r, tmin, closest, cur))
