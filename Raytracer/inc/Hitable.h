@@ -1,10 +1,14 @@
 #pragma once
 
 #include "Ray.h"
+#include <memory>
+
+class Material;
 
 struct HitRecord {
   float t;
   Vector3 p, normal;
+  std::shared_ptr<Material> materialPointer;
 };
 
 // abstract for hitables
