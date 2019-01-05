@@ -46,5 +46,5 @@ auto CameraWithAperture::GetRay(float u, float v) -> Ray
 {
   const Vector3 randomDisk = lensRadius * RandomPointinUnitDisk();
   const Vector3 offset = right * randomDisk.x + up * randomDisk.y;
-  return Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin - offset);
+  return Ray(origin + offset, lowerLeftCorner + u * horizontal + v * vertical - origin - offset);
 }

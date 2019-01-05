@@ -51,7 +51,7 @@ int main(int argc, char** argv)
   camConfig.cameraDirection = Vector3(0.0f, 0.0f, -1.0f);
   camConfig.cameraUp = Vector3(0.0f, 1.0f, 0.0f);
   camConfig.depthOfField = (camConfig.cameraOrigin - camConfig.cameraDirection).Length();
-  camConfig.apertureSize = .1;
+  camConfig.apertureSize = 2.0f;
   CameraWithAperture ViewPort(camConfig);
   
   float v = (0.5f + ny - 1) * deltaV;
