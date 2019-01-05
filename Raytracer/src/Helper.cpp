@@ -38,6 +38,15 @@ vec3 RandomPointInUnitCircle()
   return result;
 }
 
+Vector3 RandomPointinUnitDisk()
+{
+  vec3 result;
+  do {
+    result = 2.0f * vec3(RandomFloat(), RandomFloat(), 0.0f) - vec3(1, 1, 0);
+  } while (result.SquareLength() >= 1.0);
+  return result;
+}
+
 static const vec3 circlePosition(0, 0, -1);
 static const float radius = 0.5f;
 vec3 Color(const Ray& r)

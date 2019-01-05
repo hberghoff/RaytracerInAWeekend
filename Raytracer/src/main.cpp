@@ -30,9 +30,9 @@ auto RayWobble = std::bind(RandomFloatDistribution, RandomNumberGenerator);
 
 int main(int argc, char** argv)
 {
-  const int SCALE = 3;
+  const int SCALE = 2;
   const int nx = 200 * SCALE, ny = 100 * SCALE;
-  const int RaysToGenerate = 200;
+  const int RaysToGenerate = 32;
   PPMFile FinalImage(nx, ny);
   const float deltaU = 1.0f / nx, deltaV = 1.0f / ny;
 
@@ -44,7 +44,15 @@ int main(int argc, char** argv)
   list.push_back(std::make_shared<Sphere>(vec3(-1, 0, -1), -0.45f, std::make_shared<Dielectric>(1.45f)));
   auto world = std::make_shared<HitableList>(list);
 
-  Camera ViewPort;
+  CameraConfiguration camConfig;
+  camConfig.verticalFieldOfViewInDegrees = 20.0f;
+  camConfig.aspectRatio = static_cast<float>(nx) / static_cast<float>(ny);
+  camConfig.cameraOrigin = Vector3(3.0F, 3.0F, 2.0F);
+  camConfig.cameraDirection = Vector3(0.0f, 0.0f, -1.0f);
+  camConfig.cameraUp = Vector3(0.0f, 1.0f, 0.0f);
+  camConfig.depthOfField = (camConfig.cameraOrigin - camConfig.cameraDirection).Length();
+  camConfig.apertureSize = .1;
+  CameraWithAperture ViewPort(camConfig);
   
   float v = (0.5f + ny - 1) * deltaV;
   for (int j = ny - 1; j >= 0; j--)

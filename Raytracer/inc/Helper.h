@@ -16,6 +16,8 @@ float HitSphere(const Vector3& center, const float radius, const Ray& r);
 
 Vector3 RandomPointInUnitCircle();
 
+Vector3 RandomPointinUnitDisk();
+
 Vector3 Color(const Ray& r);
 
 Vector3 Color(const Ray& r, const std::shared_ptr<Hitable>& hitables, int bounceCount);
