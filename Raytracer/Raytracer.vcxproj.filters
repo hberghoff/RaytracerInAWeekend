@@ -37,7 +37,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Materials.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Helper.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\Materials.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

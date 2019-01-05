@@ -1,10 +1,11 @@
 #include "..\inc\Sphere.h"
+#include "..\inc\Materials.h"
 
 Sphere::Sphere()
 {
 }
 
-Sphere::Sphere(const Vector3 & cent, float r) : center(cent), radius(r)
+Sphere::Sphere(const Vector3 & cent, float r, std::shared_ptr<Material> mat) : center(cent), radius(r), material(mat)
 {
 }
 
@@ -25,6 +26,7 @@ auto Sphere::hit(const Ray & r, float tmin, float tmax, HitRecord & result) cons
       result.t = temp;
       result.p = r.PointAtParameter(result.t);
       result.normal = (result.p - center) / radius;
+      result.materialPointer = material;
       return true;
     }
     temp += 2.0f * root * invA;
@@ -33,6 +35,7 @@ auto Sphere::hit(const Ray & r, float tmin, float tmax, HitRecord & result) cons
       result.t = temp;
       result.p = r.PointAtParameter(result.t);
       result.normal = (result.p - center) / radius;
+      result.materialPointer = material;
       return true;
     }
   }

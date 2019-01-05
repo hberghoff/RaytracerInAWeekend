@@ -19,7 +19,16 @@ public:
 class Metal : public Material
 {
 public:
-  Metal(const Vector3& Albedo);
+  Metal(const Vector3& Albedo, float fuzzy);
   virtual auto Scatter(const Ray& rayIn, const HitRecord& rec, Vector3& attentuation, Ray& scatteredray) -> bool;
   Vector3 albedo;
+  float fuzziness;
+};
+
+class Dielectric : public Material
+{
+public:
+  Dielectric(float refractionIdx);
+  virtual auto Scatter(const Ray& rayIn, const HitRecord& rec, Vector3& attentuation, Ray& scatteredray) -> bool;
+  float refractionIndex;
 };
