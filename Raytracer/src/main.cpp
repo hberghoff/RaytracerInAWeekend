@@ -8,6 +8,7 @@
 #include <float.h>
 #include <random>
 #include <functional>
+#include <thread>
 
 void TestFileWrite(int nx, int ny)
 {
@@ -37,7 +38,7 @@ struct ThreadConfiguration
   float uStart, vStart, deltaV, deltaU;
 };
 
-void ColorFromRay(const ThreadConfiguration& threadConfig, CameraWithAperture& ViewPort, std::shared_ptr<HitableList>& world)
+void ColorFromRay(const ThreadConfiguration threadConfig, const CameraWithAperture& ViewPort, const std::shared_ptr<HitableList>& world)
 {
   vec3 AggregateColor;
   for (int RayIter = 0; RayIter < threadConfig.iterationCount; RayIter++)
@@ -51,10 +52,10 @@ void ColorFromRay(const ThreadConfiguration& threadConfig, CameraWithAperture& V
 
 int main(int argc, char** argv)
 {
-  const int SCALE = 4;
+  const int SCALE = 5;
   const int nx = 200 * SCALE, ny = 100 * SCALE;
   const int RaysToGenerate = 10;
-  const int RaysToGeneratePerThread = 15;
+  const int RaysToGeneratePerThread = 20;
   PPMFile FinalImage(nx, ny);
   const float deltaU = 1.0f / nx, deltaV = 1.0f / ny;
 
@@ -77,10 +78,10 @@ int main(int argc, char** argv)
   camConfig.apertureSize = 0.1f;
   CameraWithAperture ViewPort(camConfig);
 
-  /*ThreadConfiguration threadConfig;
+  ThreadConfiguration threadConfig;
   threadConfig.deltaU = deltaU;
   threadConfig.deltaV = deltaV;
-  threadConfig.iterationCount = RaysToGeneratePerThread;*/
+  threadConfig.iterationCount = RaysToGeneratePerThread;
   
   float v = (0.5f + ny - 1) * deltaV;
   for (int j = ny - 1; j >= 0; j--)
@@ -88,14 +89,32 @@ int main(int argc, char** argv)
     float u = 0.5 * deltaU;
     for (int i = 0; i < nx; i++)
     {
-      vec3 AggregateColor;
-      for (int RayIter = 0; RayIter < RaysToGenerate; RayIter++)
+      for (auto& iter : aggregateColorsFromThreads)
       {
-        Ray CastedRay = ViewPort.GetRay(u + RayWobble() * deltaU, v + RayWobble() * deltaV);
-        AggregateColor += Color(CastedRay, world, 0);
+        iter = Vector3();
       }
+      std::vector<std::thread> workerThreads;
+      threadConfig.uStart = u;
+      threadConfig.vStart = v;
+
+      for (int threadIndex = 0; threadIndex < ThreadCount; threadIndex++)
+      {
+        threadConfig.aggregateIndex = threadIndex;
+        workerThreads.push_back(std::thread(ColorFromRay, threadConfig, ViewPort, world));
+      }
+
+      for (auto& thread : workerThreads)
+      {
+        thread.join();
+      }
+      
       u += deltaU;
-      AggregateColor /= static_cast<float>(RaysToGenerate);
+      vec3 AggregateColor;
+      for (auto& iter : aggregateColorsFromThreads)
+      {
+        AggregateColor += iter;
+      }
+      AggregateColor /= static_cast<float>(RaysToGeneratePerThread * ThreadCount);
       AggregateColor = Gamma2Correction(AggregateColor);
       FinalImage.AddNewPixel(AggregateColor);
     }

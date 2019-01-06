@@ -19,7 +19,7 @@ Camera::Camera(const CameraConfiguration& camConfig)
   vertical = 2.0f * halfHeight * up;
 }
 
-auto Camera::GetRay(float u, float v) -> Ray
+auto Camera::GetRay(float u, float v) const -> Ray 
 {
   return Ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
 }
@@ -42,7 +42,7 @@ CameraWithAperture::CameraWithAperture(const CameraConfiguration & camConfig)
   lensRadius = camConfig.apertureSize * 0.5f;
 }
 
-auto CameraWithAperture::GetRay(float u, float v) -> Ray
+auto CameraWithAperture::GetRay(float u, float v) const -> Ray
 {
   const Vector3 randomDisk = lensRadius * RandomPointinUnitDisk();
   const Vector3 offset = right * randomDisk.x + up * randomDisk.y;

@@ -17,7 +17,7 @@ class Camera
 {
 public:
   Camera(const CameraConfiguration& camConfig);
-  auto GetRay(float u, float v)->Ray;
+  auto GetRay(float u, float v)const->Ray;
 private:
   Vector3 origin, horizontal, vertical, lowerLeftCorner;
 };
@@ -27,7 +27,7 @@ class CameraWithAperture
 {
 public:
   CameraWithAperture(const CameraConfiguration& camConfig);
-  auto GetRay(float u, float v)->Ray;
+  auto GetRay(float u, float v)const->Ray;
 private:
   Vector3 origin, horizontal, vertical, lowerLeftCorner, lookBack, right, up;
   float lensRadius;

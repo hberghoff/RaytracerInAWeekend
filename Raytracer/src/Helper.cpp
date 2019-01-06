@@ -109,7 +109,7 @@ float Schlick(float cosine, float refractionIndexFirst, float refractionIndexSec
   return ReflectionCoefficient + (1.0f - ReflectionCoefficient) * powf(1 - cosine, 5);
 }
 
-static const int LocationRange = 12;
+static const int LocationRange = 10;
 static const float DiffuseProbability = 0.33f;
 static const float MetalProbability = 0.66f;
 void MakeRandomScene(std::vector<std::shared_ptr<Hitable>>& scene)
