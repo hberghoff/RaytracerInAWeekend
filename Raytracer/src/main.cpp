@@ -28,31 +28,59 @@ extern std::default_random_engine RandomNumberGenerator;
 extern std::uniform_real_distribution<float> RandomFloatDistribution;
 auto RayWobble = std::bind(RandomFloatDistribution, RandomNumberGenerator);
 
+static const int ThreadCount = 4;
+static std::vector<Vector3> aggregateColorsFromThreads(ThreadCount, Vector3());
+
+struct ThreadConfiguration
+{
+  int aggregateIndex, iterationCount; 
+  float uStart, vStart, deltaV, deltaU;
+};
+
+void ColorFromRay(const ThreadConfiguration& threadConfig, CameraWithAperture& ViewPort, std::shared_ptr<HitableList>& world)
+{
+  vec3 AggregateColor;
+  for (int RayIter = 0; RayIter < threadConfig.iterationCount; RayIter++)
+  {
+    Ray CastedRay = ViewPort.GetRay(threadConfig.uStart + RayWobble() * threadConfig.deltaU, threadConfig.vStart + RayWobble() * threadConfig.deltaV);
+    AggregateColor += Color(CastedRay, world, 0);
+  }
+  aggregateColorsFromThreads[threadConfig.aggregateIndex] = AggregateColor;
+}
+
+
 int main(int argc, char** argv)
 {
-  const int SCALE = 2;
+  const int SCALE = 4;
   const int nx = 200 * SCALE, ny = 100 * SCALE;
-  const int RaysToGenerate = 32;
+  const int RaysToGenerate = 10;
+  const int RaysToGeneratePerThread = 15;
   PPMFile FinalImage(nx, ny);
   const float deltaU = 1.0f / nx, deltaV = 1.0f / ny;
 
   std::vector<std::shared_ptr<Hitable>> list;
-  list.push_back(std::make_shared<Sphere>(vec3(0, 0, -1), 0.5f, std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
-  list.push_back(std::make_shared<Sphere>(vec3(0, -100.5, -1), 100.0f, std::make_shared<Lambertian>(vec3(0.8f, 0.8f, 0.0f))));
-  list.push_back(std::make_shared<Sphere>(vec3(1, 0, -1), 0.5f, std::make_shared<Metal>(vec3(0.8f, 0.6f, 0.2f), 0.0f)));
-  list.push_back(std::make_shared<Sphere>(vec3(-1, 0, -1), 0.5f, std::make_shared<Dielectric>(1.5f)));
-  list.push_back(std::make_shared<Sphere>(vec3(-1, 0, -1), -0.45f, std::make_shared<Dielectric>(1.45f)));
+  MakeRandomScene(list);
+  list.push_back(std::make_shared<Sphere>(vec3(-4, 1, 0), 1.0f, std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+  list.push_back(std::make_shared<Sphere>(vec3(0, -1000, -1), 1000.0f, std::make_shared<Lambertian>(vec3(0.5f, 0.5f, 0.5f))));
+  list.push_back(std::make_shared<Sphere>(vec3(4, 1, 0), 1.0f, std::make_shared<Metal>(vec3(0.8f, 0.6f, 0.2f), 0.0f)));
+  list.push_back(std::make_shared<Sphere>(vec3(0, 1, 0), 1.0f, std::make_shared<Dielectric>(1.5f)));
+  //list.push_back(std::make_shared<Sphere>(vec3(0, 1, 0), -.95f, std::make_shared<Dielectric>(1.45f)));
   auto world = std::make_shared<HitableList>(list);
 
   CameraConfiguration camConfig;
   camConfig.verticalFieldOfViewInDegrees = 20.0f;
   camConfig.aspectRatio = static_cast<float>(nx) / static_cast<float>(ny);
-  camConfig.cameraOrigin = Vector3(3.0F, 3.0F, 2.0F);
-  camConfig.cameraDirection = Vector3(0.0f, 0.0f, -1.0f);
+  camConfig.cameraOrigin = Vector3(13.0F, 2.0F, 3.0F);
+  camConfig.cameraDirection = Vector3(0.0f, 0.0f, 0.0f) - camConfig.cameraOrigin;
   camConfig.cameraUp = Vector3(0.0f, 1.0f, 0.0f);
-  camConfig.depthOfField = (camConfig.cameraOrigin - camConfig.cameraDirection).Length();
-  camConfig.apertureSize = 2.0f;
+  camConfig.depthOfField = 10.0f;
+  camConfig.apertureSize = 0.1f;
   CameraWithAperture ViewPort(camConfig);
+
+  /*ThreadConfiguration threadConfig;
+  threadConfig.deltaU = deltaU;
+  threadConfig.deltaV = deltaV;
+  threadConfig.iterationCount = RaysToGeneratePerThread;*/
   
   float v = (0.5f + ny - 1) * deltaV;
   for (int j = ny - 1; j >= 0; j--)

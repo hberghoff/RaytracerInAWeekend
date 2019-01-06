@@ -1,5 +1,6 @@
 #pragma once
 #include "Hitable.h"
+#include <vector>
 
 
 template <typename T>
@@ -27,3 +28,5 @@ Vector3 ReflectFirstAboutSecond(const Vector3& first, const Vector3& second);
 bool Refract(const Vector3& inboundRayDirection, const Vector3& surfaceNormal, float indexInitialOverTarget, Vector3& refractedRayDirection);
 
 float Schlick(float cosine, float refractionIndexFirst, float refractionIndexSecond);
+
+void MakeRandomScene(std::vector<std::shared_ptr<Hitable>>& scene);

@@ -1,5 +1,6 @@
 #include "..\inc\Helper.h"
 #include "..\inc\Materials.h"
+#include "..\inc\Sphere.h"
 #include <random>
 #include <functional>
 
@@ -106,4 +107,32 @@ float Schlick(float cosine, float refractionIndexFirst, float refractionIndexSec
   float ReflectionCoefficient = (refractionIndexFirst - refractionIndexSecond) / (refractionIndexFirst + refractionIndexSecond);
   ReflectionCoefficient *= ReflectionCoefficient;
   return ReflectionCoefficient + (1.0f - ReflectionCoefficient) * powf(1 - cosine, 5);
+}
+
+static const int LocationRange = 12;
+static const float DiffuseProbability = 0.33f;
+static const float MetalProbability = 0.66f;
+void MakeRandomScene(std::vector<std::shared_ptr<Hitable>>& scene)
+{
+  for (int xCoordinate = -LocationRange; xCoordinate <= LocationRange; xCoordinate++)
+  {
+    for (int zCoordinate = -LocationRange; zCoordinate <= LocationRange; zCoordinate++)
+    {
+      float materialSelection = RandomFloat0_1();
+      float sphereRadius = 0.1f * (RandomFloat0_1() + 1.0f);
+      Vector3 center(xCoordinate + 0.5f * (RandomFloat0_1() * 2.0f - 1.0f), sphereRadius, zCoordinate + 0.5f * (RandomFloat0_1() * 2.0f - 1.0f));
+      if (materialSelection < DiffuseProbability)
+      {
+        scene.push_back(std::make_shared<Sphere>(center, sphereRadius, std::make_shared<Lambertian>(vec3(RandomFloat0_1() * RandomFloat0_1(), RandomFloat0_1()*RandomFloat0_1(), RandomFloat0_1()*RandomFloat0_1()))));
+      }
+      else if (materialSelection < MetalProbability)
+      {
+        scene.push_back(std::make_shared<Sphere>(center, sphereRadius, std::make_shared<Metal>(vec3(RandomFloat0_1(), RandomFloat0_1(), RandomFloat0_1()), 0.0f)));
+      }
+      else
+      {
+        scene.push_back(std::make_shared<Sphere>(center, sphereRadius, std::make_shared<Dielectric>(1.5f)));
+      }
+    }
+  }
 }
